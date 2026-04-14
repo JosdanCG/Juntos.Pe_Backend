@@ -3,6 +3,7 @@ import slug from 'slug'
 import User from "../models/User";
 import { checkPass, hashPass } from "../utils/auth";
 import { validationResult } from "express-validator";
+import { generateJWT } from "../utils/jwt";
 
 export const createAcount = async (req: Request, res: Response) => {
 
@@ -16,7 +17,7 @@ export const createAcount = async (req: Request, res: Response) => {
     const userExists = await User.findOne({ email });
     if (userExists) {
         const error = new Error('El usuario con este email ya está registrado');
-        return res.status(400).json({ msg: error.message });
+        return res.status(400).json({ error: error.message });
     }
 
     const handle = slug(req.body.handle, '')
@@ -44,14 +45,16 @@ export const login = async (req: Request, res: Response) => {
     const user = await User.findOne({ email });
     if (!user) {
         const error = new Error('El usuario no existe');
-        return res.status(404).json({ msg: error.message });
+        return res.status(404).json({ error: error.message });
     }
 
     const isPasswordCorrect = await checkPass(password, user.password)
     if (!isPasswordCorrect) {
         const error = new Error('El password es incorrecto');
-        return res.status(401).json({ msg: error.message });
+        return res.status(401).json({ error: error.message });
     }
+
+    const token = generateJWT({ id: user._id })
     
-    res.send('autenticando....')
+    res.send(token)
 }
