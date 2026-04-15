@@ -1,6 +1,7 @@
 import { Router } from "express";
-import { createAcount, login } from "./handlers/indexH";
+import { createAcount, getUser, login } from "./handlers/indexH";
 import { body } from "express-validator";
+import { get } from "mongoose";
 
 const router = Router();
 
@@ -28,6 +29,7 @@ router.post('/auth/login',
         .withMessage('El password es obligatorio2'),
     login
 )
-    
+
+router.get('/user', getUser)
 
 export default router;
