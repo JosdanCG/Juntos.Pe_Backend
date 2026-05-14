@@ -2,6 +2,7 @@ import { Router } from "express";
 import { createAcount, getUser, login } from "./handlers/indexH";
 import { body } from "express-validator";
 import { get } from "mongoose";
+import { handleInputErrors } from "./middleware/validation";
 
 const router = Router();
 
@@ -27,6 +28,7 @@ router.post('/auth/login',
     body('password')
         .notEmpty()
         .withMessage('El password es obligatorio2'),
+    handleInputErrors,
     login
 )
 
